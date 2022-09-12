@@ -1,13 +1,18 @@
 <template>
-  <Clientes></Clientes>
+  
+  <router-view/>
 </template>
   
 <script>
 import Clientes from './components/Clientes.vue'
+import Empleados from './components/Empleados.vue'
+import Reportes from './components/Reportes.vue'
 export default {
   name: 'App',
   components: {
-    Clientes
+    Clientes, 
+    Empleados, 
+    Reportes, 
   }
 }
 </script>

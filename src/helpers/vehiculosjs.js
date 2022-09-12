@@ -31,5 +31,12 @@ export const obtenerVehMarMod =  async (marca, modelo) => {
 export const cambia_modelos = (num) => { 
     return todosModelos[num]
 }
-
- export default cambia_modelos; obtenerVehMarMod; 
+export const buscarDisponible = (placa) =>{
+    return buscarVehiculoDisponible(placa)
+}
+const buscarVehiculoDisponible = async (placa) => {
+    const data = axios.get(`http://localhost:8085/APIBudget/V1/vehiculos/placa/${placa}`).then(r=>r.data)
+    return data
+}
+ 
+ export default cambia_modelos; obtenerVehMarMod; buscarDisponible;  

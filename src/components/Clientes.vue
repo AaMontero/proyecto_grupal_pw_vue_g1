@@ -57,45 +57,113 @@
       </tr>
     </table>
   </div>
+  <div id="reservarAutoDiv">
+    <form action="RegistrarVehiculo">
+      <h3>Reservar un vehiculo</h3>
+      <div class="input-group input-group-sm mb-3">
+        <label class="input-group-text" for="Placa"> Placa: </label>
+        <input
+          class="form-control"
+          id="Placa"
+          type="text"
+          v-model="buscarPlaca"
+        />
+      </div>
+      <div class="input-group input-group-sm mb-3">
+        <label class="input-group-text" for="Cedula"> Cédula: </label>
+        <input
+          class="form-control"
+          id="Cedula"
+          type="text"
+          v-model="buscarCedula"
+        />
+      </div>
+      <div class="input-group input-group-sm mb-3">
+        <label class="input-group-text" for="fInicio"> Fecha Inicio: </label>
+        <input
+          class="form-control"
+          id="fInicio"
+          type="date"
+          v-model="buscarFechaInicio"
+        />
+      </div>
+      <div class="input-group input-group-sm mb-3">
+        <label class="input-group-text" for="fFin"> Fecha Fin: </label>
+        <input
+          class="form-control"
+          id="fFin"
+          type="date"
+          v-model="buscarFechaFin"
+        />
+      </div>
+    </form>
+    <button v-on:click="reservarVehiculo" class="btn btn-secondary btn-sm">Buscar Disponible</button>
+  </div>
+
   <div id="registroDeClientesDiv" class="input-group">
-    
     <form action="Register">
       <h3>Registro de clientes</h3>
       <div class="input-group input-group-sm mb-3">
         <label class="input-group-text" for="Cedula"> Cedula: </label>
-        <input class="form-control" id="Cedula" type="text" v-model ="cedulaIngresar"/>
+        <input
+          class="form-control"
+          id="Cedula"
+          type="text"
+          v-model="cedulaIngresar"
+        />
       </div>
       <div class="input-group input-group-sm mb-3">
         <label class="input-group-text" for="Nombre"> Nombre: </label>
-        <input class="form-control" id="Nombre" type="text" v-model ="nombreIngresar"/>
+        <input
+          class="form-control"
+          id="Nombre"
+          type="text"
+          v-model="nombreIngresar"
+        />
       </div>
       <div class="input-group input-group-sm mb-3">
         <label class="input-group-text" for="Apellido"> Apellido: </label>
-        <input class="form-control" id="Apellido" type="text" v-model ="apellidoIngresar"/>
+        <input
+          class="form-control"
+          id="Apellido"
+          type="text"
+          v-model="apellidoIngresar"
+        />
       </div>
       <div class="input-group input-group-sm mb-3">
-        <label class="input-group-text" for="FechaNacimiento" >
+        <label class="input-group-text" for="FechaNacimiento">
           Fecha de Nacimiento:
         </label>
-        <input class="form-control" id="FechaNacimiento" type="date" v-model ="fechaNacIngresar"/>
+        <input
+          class="form-control"
+          id="FechaNacimiento"
+          type="date"
+          v-model="fechaNacIngresar"
+        />
       </div>
       <div class="input-group input-group-sm mb-3">
         <label class="input-group-text" for="Genero"> Genero: </label>
-        <select class="form-select form-select-sm" name="Genero" id="genero" v-model ="generoIngresar">
+        <select
+          class="form-select form-select-sm"
+          name="Genero"
+          id="genero"
+          v-model="generoIngresar"
+        >
           <option value="M">Masculino</option>
           <option value="F">Femenino</option>
         </select>
-        
       </div>
     </form>
-    
   </div>
-  <button v-on:click="insertar"  class="btn btn-secondary btn-sm"> Insertar</button>
+  <button v-on:click="insertar" class="btn btn-secondary btn-sm">
+    Insertar
+  </button>
 </template>
 
 <script>
-import { cambia_modelos, obtenerVehMarMod } from "../helpers/vehiculosjs";
-import {insertarCliente} from "../helpers/clientes.js"
+import { cambia_modelos, obtenerVehMarMod, buscarDisponible} from "../helpers/vehiculosjs";
+import { insertarCliente } from "../helpers/clientes.js";
+import {reservar} from "../helpers/reservas.js"
 
 export default {
   data() {
@@ -115,34 +183,59 @@ export default {
       ],
       listaBusqueda: [],
       cedulaIngresar: "",
-      nombreIngresar:"",
-      apellidoIngresar:"", 
-      fechaNacIngresar:"", 
-      generoIngresar:"", 
+      nombreIngresar: "",
+      apellidoIngresar: "",
+      fechaNacIngresar: "",
+      generoIngresar: "",
+      buscarPlaca: "",
+      buscarCedula: "",
+      buscarFechaInicio: null,
+      buscarFechaFin: null,
+      estaDisponible : false, 
     };
   },
   methods: {
     llenarModelos() {
-      this.listaModelos = cambia_modelos(this.marcaSeleccionada);
+      this.listaModelos = cambia_modelos(this.marcaSeleccionada)
     },
     async obtenerResultadosBusqueda() {
-      var marca = this.listaMarcas[this.marcaSeleccionada - 1];
-      const response = await obtenerVehMarMod(marca, this.modeloSeleccionado);
-      this.listaBusqueda = response;
-      this.mostrarBusqueda = true;
+      var marca = this.listaMarcas[this.marcaSeleccionada - 1]
+      const response = await obtenerVehMarMod(marca, this.modeloSeleccionado)
+      this.listaBusqueda = response
+      this.mostrarBusqueda = true
+      this.marcaSeleccionada=0
+      this.modeloSeleccionado=0 
     },
-    async insertar(){
+    async insertar() {
       const cliente = {
         cedula: this.cedulaIngresar,
-        nombre: this.nombreIngresar, 
+        nombre: this.nombreIngresar,
         apellido: this.apellidoIngresar,
         fechaNacimiento: this.fechaNacIngresar,
         genero: this.generoIngresar,
-      };
-      console.log(cliente)
+      }
       const response = await insertarCliente(cliente);
-      console.log(response);
-    } 
+      this.cedulaIngresar=""
+      this.nombreIngresar=""
+      this.apellidoIngresar=""
+      this.fechaNacIngresar=null
+      this.generoIngresar=null
+    },
+    async reservarVehiculo(){
+        const reserva = {
+          fechaI: this.buscarFechaInicio,
+          fechaF: this.buscarFechaFin,
+          cedula: this.buscarCedula,
+          placa: this.buscarPlaca,
+        }
+        console.log(reserva.fechaI)
+        console.log(reserva.fechaF)
+      const response = await reservar(reserva);
+      this.buscarCedula = "",
+      this.buscarPlaca ="", 
+      this.buscarFechaInicio=null,
+      this.buscarFechaFin= null
+    },
   },
 };
 </script>
@@ -165,5 +258,12 @@ form {
 #tablaBusqueda {
   width: 800px;
   margin: auto;
+}
+#reservarAutoDiv {
+  width: 600px;
+  margin: auto;
+}
+label {
+  width: 150px;
 }
 </style>

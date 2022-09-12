@@ -8,5 +8,12 @@ const insertarClientedesdeCliente =(body1) =>{
 export const insertarCliente = async (cliente) => {
     return await insertarClientedesdeCliente(cliente);
 }
+const insertarClientedesdeEmpleado = (body1) =>{
+
+}
+export const insertarClienteE = async (cliente) => {
+    return await insertarClientedesdeEmpleado(cliente); 
+}
+
 
 export default insertarCliente;
