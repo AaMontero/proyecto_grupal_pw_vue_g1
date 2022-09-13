@@ -23,5 +23,14 @@ const buscarclienteCedula = (id) =>{
 export const buscarCliente = async (cedula) =>{
     return await buscarclienteCedula(cedula); 
 }
+const cambiarTarjetaAxios = (cedula, tarjeta) =>{
+    console.log("Entra a fachada")
+    const datos = axios.put(`http://localhost:8085/APIBudget/V1/reservaciones?cedula=${cedula}&numTar=${tarjeta}`).then(r=>r.data)
+}
+export const cambiarTarjeta = async (cedula,tarjeta) =>{
+    console.log("Entra a real")
+    return cambiarTarjetaAxios(cedula,tarjeta)    
+}
 
-export default insertarCliente;buscarCliente;insertarClienteE; 
+
+export default insertarCliente;buscarCliente;insertarClienteE; cambiarTarjeta;

@@ -1,9 +1,9 @@
 <template>
   <h2>REPORTES</h2>
   <div id="buscarDiv">
-    <h3>Reportes de Reservas</h3>
+    <h4>Reportes de Reservas</h4>
     <div class="input-group input-group-sm mb-3">
-      <label class="input-group-text" for="ReservaInicio"
+      <label class="input-group-text " for="ReservaInicio"
         >Fecha de Inicio:
       </label>
       <input
@@ -22,67 +22,65 @@
         v-model="reservasFinLlenar"
       />
     </div>
-    <button v-on:click="buscarReportesFecha" class="btn btn-secondary btn-sm">Buscar Reportes</button>
+    <button v-on:click="buscarReportesFecha" class="btn btn-secondary btn-sm">
+      Buscar Reportes
+    </button>
   </div>
-  
-  <br>
+
+  <br />
   <div id="TablaLarga">
-    <b-table 
-      class="table table-striped table-bordered table-fixed table-secondary align-middle">
+    <b-table
+      class="
+        table table-striped table-bordered table-fixed table-secondary
+        align-middle
+      "
+    >
       <thead>
-        <tr class = "table-primary">
+        <tr class="table-primary">
           <th>Número</th>
-          <th>F. Inicio</th>
-          <th>F. Final</th>
-          <th>Estado</th>
-          <th>Total a Pagar</th>
           <th>Cedula Cliente</th>
-          <th>Nombre Cliente</th>
           <th>Placa Vehículo</th>
-          <th>Modelo Vehículo</th>
-          <th>Marca Vehículo</th>
+          <th>Detalles</th>
         </tr>
         <tr v-for="reporte in listaReportesFechas" :key="reporte.numReserva">
-            <td>{{reporte.numReserva}} </td>
-            <td>{{reporte.fechaI}} </td>
-            <td>{{reporte.fechaF}} </td>
-            <td>{{reporte.estado}} </td>
-            <td>{{reporte.totalPagar}} </td>
-            <td>{{reporte.cedulaCl}} </td>
-            <td>{{reporte.nombreCl}} </td>
-            <td>{{reporte.placaVehi}} </td>
-            <td>{{reporte.modeloVehi}} </td>
-            <td>{{reporte.marcaVehi}} </td>
+          <td>{{ reporte.numReserva }}</td>
+          <td>{{ reporte.cedulaCl }}</td>
+          <td>{{ reporte.placaVehi }}</td>
+          <td> <a v-bind:href="reporte.links[0].href">Detalles</a></td>
         </tr>
       </thead>
     </b-table>
+    <h5 v-if="noseEncontroReportes">No se encontraron datos de reportes entre las fechas seleccionadas</h5>
   </div>
-  <br>
+  <br />
   <div>
-    <h3>Reporte de Clientes VIP</h3>
-    <div id="TablaLarga">
-    <b-table class="table table-striped table-bordered table-fixed table-secondary align-middle">
-      <thead>
-        <tr class = "table-primary">
-          <th>Cédula</th>
-          <th>Valor IVa</th>
-          <th>Valor Total</th>
-        </tr>
-        <tr v-for="cliente in listaTodosVip" :key="cliente.cedula">
-            <td>{{cliente.cedula}} </td>
-            <td>{{cliente.valorIva}} </td>
-            <td>{{cliente.valorTotal}} </td>
-        </tr>
-      </thead>
-    </b-table>
+    <h4>Reporte de Clientes VIP</h4>
+    <div id="TablaPequenia">
+      <b-table
+        class="
+          table table-striped table-bordered table-fixed table-secondary
+          align-middle
+        "
+      >
+        <thead>
+          <tr class="table-primary">
+            <th>Cédula</th>
+            <th>Valor IVa</th>
+            <th>Valor Total</th>
+          </tr>
+          <tr v-for="cliente in listaTodosVip" :key="cliente.cedula">
+            <td>{{ cliente.cedula }}</td>
+            <td>${{ cliente.valorIva }}</td>
+            <td>${{ cliente.valorTotal }}</td>
+          </tr>
+        </thead>
+      </b-table>
+    </div>
   </div>
-  </div>
-
-
 </template>
 
 <script>
-import {buscarRep, buscarTodosC} from "../helpers/reportes.js"
+import { buscarRep, buscarTodosC } from "../helpers/reportes.js";
 export default {
   data() {
     return {
@@ -90,24 +88,32 @@ export default {
       reservasFinLlenar: null,
       listaReportesFechas: [],
       listaTodosVip: [],
+      linkReserva:"", 
+      noseEncontroReportes:false,
     };
   },
   methods: {
-    async buscarReportesFecha(){
-      var response = await buscarRep( this.reservasInicioLlenar, this.reservasFinLlenar) 
-      console.log(response) 
-      this.listaReportesFechas = response 
+    async buscarReportesFecha() {
+      var response = await buscarRep(
+        this.reservasInicioLlenar,
+        this.reservasFinLlenar
+      );
+      if(response.length===0){
+        this.noseEncontroReportes=true; 
+      }
+      console.log(response);
+      
+      this.listaReportesFechas = response;
     },
-    async buscarTodos(){
-      var response = await buscarTodosC()
-      console.log(response)
-      this.listaTodosVip = response
-    }
-
-  },mounted(){
-     this.buscarTodos();
-  }
-
+    async buscarTodos() {
+      var response = await buscarTodosC();
+      console.log(response);
+      this.listaTodosVip = response;
+    },
+  },
+  mounted() {
+    this.buscarTodos();
+  },
 };
 </script>
 
