@@ -3,7 +3,9 @@ const routes = [
     
         {path:'/Clientes', component: () => import ('../components/Clientes.vue')}, 
         {path:'/Empleados', component: () => import ('../components/Empleados.vue')},
-        {path:'/Reportes', component: () => import ('../components/Reportes.vue')}
+        {path:'/Reportes', component: () => import ('../components/Reportes.vue')},
+        {path:'/Reservas', component: () => import ('../components/Reservas.vue')}
+
 ]
 
 

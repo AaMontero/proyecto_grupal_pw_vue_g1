@@ -1,6 +1,6 @@
 <template>
+<h2>Reservas</h2>
   <div id="buscarAutos">
-    <h2>Clientes</h2>
     <h3>Buscar vehiculos disponibles</h3>
     <form name="f1">
       <label for="marca"> Marca del Vehiculo: </label>
@@ -26,7 +26,6 @@
         </option>
       </select>
     </form>
-    
     <button
       class="btn btn-secondary btn-sm"
       v-on:click="obtenerResultadosBusqueda"
@@ -34,11 +33,14 @@
       BUSCAR
     </button>
   </div>
-  <br />
+  <br>
   <div id="tablaBusqueda" v-if="mostrarBusqueda">
     
     <b-table
-      class="table table-striped table-bordered table-fixed table-secondary align-middle"
+      class="
+        table table-striped table-bordered table-fixed table-secondary
+        align-middle
+      "
     >
       <thead>
         <tr class="table-primary">
@@ -62,8 +64,9 @@
   </div>
   <br>
   <div id="reservarAutoDiv">
+    <h3>Reservar un vehiculo</h3>
     <form action="RegistrarVehiculo">
-      <h3>Reservar un vehiculo</h3>
+      
       <div class="input-group input-group-sm mb-3">
         <label class="input-group-text" for="Placa"> Placa: </label>
         <input
@@ -105,74 +108,54 @@
       Buscar Disponible
     </button>
   </div>
-<br>
-  <div id="registroDeClientesDiv" class="input-group">
-    <form action="Register">
-      <h3>Registro de clientes</h3>
-      <div class="input-group input-group-sm mb-3">
-        <label class="input-group-text" for="Cedula"> Cedula: </label>
-        <input
-          class="form-control"
-          id="Cedula"
-          type="text"
-          v-model="cedulaIngresar"
-        />
-      </div>
-      <div class="input-group input-group-sm mb-3">
-        <label class="input-group-text" for="Nombre"> Nombre: </label>
-        <input
-          class="form-control"
-          id="Nombre"
-          type="text"
-          v-model="nombreIngresar"
-        />
-      </div>
-      <div class="input-group input-group-sm mb-3">
-        <label class="input-group-text" for="Apellido"> Apellido: </label>
-        <input
-          class="form-control"
-          id="Apellido"
-          type="text"
-          v-model="apellidoIngresar"
-        />
-      </div>
-      <div class="input-group input-group-sm mb-3">
-        <label class="input-group-text" for="FechaNacimiento">
-          Fecha de Nacimiento:
-        </label>
-        <input
-          class="form-control"
-          id="FechaNacimiento"
-          type="date"
-          v-model="fechaNacIngresar"
-        />
-      </div>
-      <div class="input-group input-group-sm mb-3">
-        <label class="input-group-text" for="Genero"> Genero: </label>
-        <select
-          class="form-select form-select-sm"
-          name="Genero"
-          id="genero"
-          v-model="generoIngresar"
-        >
-          <option value="M">Masculino</option>
-          <option value="F">Femenino</option>
-        </select>
-      </div>
-    </form>
-    
+  <br>
+  <div id="buscarDiv">
+    <h3>Buscar Reserva</h3>
+    <div class="input-group input-group-sm mb-3">
+      <label class="input-group-text" for="ReservaBuscar">Reserva: </label>
+      <input
+        class="form-control"
+        id="ReservaBuscar"
+        type="text"
+        v-model="reservaBuscarIngresar"
+      />
+    </div>
+    <button v-on:click="cambiarReserva" class="btn btn-secondary btn-sm">
+      Cambiar Reserva
+    </button>
   </div>
-  <button v-on:click="insertar" class="btn btn-secondary btn-sm">
-    Insertar
-  </button>
-  
+  <br>
+  <div id="resultadoReservaDiv">
+    <b-table
+      class="
+        table table-striped table-bordered table-fixed table-secondary
+        align-middle
+      "
+    >
+      <thead>
+        <tr class="table-primary">
+          <th>Placa</th>
+          <th>Modelo</th>
+          <th>Estado</th>
+          <th>Fecha</th>
+          <th>Reservado por</th>
+        </tr>
+      </thead>
+      <tr>
+        <td>{{ reservaEncontrada.placa }}</td>
+        <td>{{ reservaEncontrada.modelo }}</td>
+        <td>{{ reservaEncontrada.estado }}</td>
+        <td>{{ reservaEncontrada.fecha }}</td>
+        <td>{{ reservaEncontrada.reservadoPor }}</td>
+      </tr>
+    </b-table>
+  </div>
 </template>
 
 <script>
 import { cambia_modelos, obtenerVehMarMod } from "../helpers/vehiculosjs";
-import { insertarCliente } from "../helpers/clientes.js";
 import { reservar } from "../helpers/reservas.js";
-
+import { cambiar } from "../helpers/reservas.js";
 export default {
   data() {
     return {
@@ -200,6 +183,14 @@ export default {
       buscarFechaInicio: null,
       buscarFechaFin: null,
       estaDisponible: false,
+      reservaBuscarIngresar: "",
+      reservaEncontrada: {
+        placa: "",
+        modelo: "",
+        estado: "",
+        fecha: "",
+        reservadoPor: "",
+      },
     };
   },
   methods: {
@@ -213,21 +204,6 @@ export default {
       this.mostrarBusqueda = true;
       this.marcaSeleccionada = 0;
       this.modeloSeleccionado = 0;
-    },
-    async insertar() {
-      const cliente = {
-        cedula: this.cedulaIngresar,
-        nombre: this.nombreIngresar,
-        apellido: this.apellidoIngresar,
-        fechaNacimiento: this.fechaNacIngresar,
-        genero: this.generoIngresar,
-      };
-      const response = await insertarCliente(cliente);
-      this.cedulaIngresar = "";
-      this.nombreIngresar = "";
-      this.apellidoIngresar = "";
-      this.fechaNacIngresar = null;
-      this.generoIngresar = null;
     },
     async reservarVehiculo() {
       const reserva = {
@@ -244,43 +220,15 @@ export default {
         (this.buscarFechaInicio = null),
         (this.buscarFechaFin = null);
     },
+    async cambiarReserva() {
+      console.log("Entra al metodo en VUE");
+      var response = await cambiar(this.reservaBuscarIngresar);
+      console.log(response);
+      this.reservaEncontrada = response;
+    },
   },
 };
 </script>
 
 <style>
-option {
-  margin-left: 30px;
-}
-h2{
-  font-weight: bold; 
-  text-transform: capitalize
-}
-h3{
-  font-style: italic
-}
-form {
-  margin: auto;
-  text-align: center;
-}
-#buscarAutos {
-  height: fit-content;
-  width: fit-content;
-  text-align: center;
-  margin: auto;
-}
-
-#tablaBusqueda {
-  width: fit-content;
-  height: fit-content;
-  margin: auto;
-}
-#reservarAutoDiv {
-  width: 400px;
-  margin: auto;
-  height: fit-content;
-}
-label {
-  width: 150px;
-}
 </style>
